@@ -14,13 +14,21 @@ class BaiduBot extends EventEmitter {
    * @param {string} secretKey
    * @param {string} sceneid
    * @param {string} player
+   * @param {boolean} continual
    * @param {Function} intents
    */
-  constructor({apiKey, secretKey, sceneid, player, intents}){
+  constructor({
+    apiKey,
+    secretKey,
+    sceneid,
+    recordRate = '16000',
+    player,
+    continual,
+    intents}){
     super();
 
     this.speech = new BDSpeech(apiKey, secretKey);
-    this.listener = new BDListener({apiKey, secretKey});
+    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual});
     this.unit = new BDUNIT({apiKey, secretKey, sceneid});
 
     this.listener.on('ready', () => {this._.readyCount += 1;});
@@ -31,6 +39,8 @@ class BaiduBot extends EventEmitter {
 
     this.listener.on('start', () => this.emit('listen'))
     this.listener.on('success', this._query.bind(this))
+    this.listener.on('upload', () => this.emit('upload'))
+    this.listener.on('fail', error => this.emit('error', error))
     this.unit.on('success', this._response.bind(this))
     this.unit.on('debug', (data)=>console.log(data))
 

@@ -9,8 +9,8 @@ baidu_yuyin@^2.3.0:
   resolved "https://registry.yarnpkg.com/baidu_yuyin/-/baidu_yuyin-2.3.0.tgz#8afa2f74de4406c70f53aa2f12a531fd74dea281"
 
 baidu-stt@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/baidu-stt/-/baidu-stt-1.0.1.tgz#bb1322cf2fa8f1b4488dc150df2017f3946390be"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/baidu-stt/-/baidu-stt-1.0.3.tgz#0a34923d4e79f699022f5d640cb6b746f5c23fd9"
   dependencies:
     mic "^2.1.2"
 
