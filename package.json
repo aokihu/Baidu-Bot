@@ -6,12 +6,16 @@
     "url": "https://github.com/aokihu/Baidu-Bot.git",
     "type": "git"
   },
+  "scripts": {
+    "test":"node ./test.js"
+  },
   "author": "aokihu <aokihu@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "baidu-stt": "^1.0.1",
     "baidu_unit": "^1.0.2",
     "baidu_yuyin": "^2.3.0",
-    "ramda": "^0.24.1"
+    "ramda": "^0.24.1",
+    "snowboy": "^1.2.0"
   }
 }
