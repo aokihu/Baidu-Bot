@@ -40,6 +40,7 @@ class BaiduBot extends EventEmitter {
     this.listener.on('start', () => this.emit('listen'))
     this.listener.on('success', this._query.bind(this))
     this.listener.on('upload', () => this.emit('upload'))
+    this.listener.on('wake', () => this.emit('wake'))
     this.listener.on('fail', error => this.emit('error', error))
     this.unit.on('success', this._response.bind(this))
     this.unit.on('debug', (data)=>console.log(data))

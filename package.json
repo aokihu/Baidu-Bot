@@ -7,7 +7,7 @@
     "type": "git"
   },
   "scripts": {
-    "test":"node ./test.js"
+    "test": "node ./test.js"
   },
   "author": "aokihu <aokihu@gmail.com>",
   "license": "MIT",
@@ -15,7 +15,6 @@
     "baidu-stt": "^1.0.1",
     "baidu_unit": "^1.0.2",
     "baidu_yuyin": "^2.3.0",
-    "ramda": "^0.24.1",
-    "snowboy": "^1.2.0"
+    "ramda": "^0.24.1"
   }
 }
