@@ -23,12 +23,15 @@ class BaiduBot extends EventEmitter {
     sceneid,
     recordRate = '16000',
     player,
+    hotword,
+    modelFile,
     continual,
+    sensitivity,
     intents}){
     super();
 
     this.speech = new BDSpeech(apiKey, secretKey);
-    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual});
+    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual, sensitivity,hotword,modelFile});
     this.unit = new BDUNIT({apiKey, secretKey, sceneid});
 
     this.listener.on('ready', () => {this._.readyCount += 1;});
@@ -40,7 +43,7 @@ class BaiduBot extends EventEmitter {
     this.listener.on('start', () => this.emit('listen'))
     this.listener.on('success', this._query.bind(this))
     this.listener.on('upload', () => this.emit('upload'))
-    this.listener.on('wake', () => this.emit('wake'))
+    this.listener.on('wakeup', () => this.emit('wakeup'))
     this.listener.on('fail', error => this.emit('error', error))
     this.unit.on('success', this._response.bind(this))
     this.unit.on('debug', (data)=>console.log(data))

@@ -63,12 +63,11 @@ baidu_yuyin@^2.3.0:
     little-fetch "^1.0.4"
 
 baidu-stt@^1.0.1:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/baidu-stt/-/baidu-stt-1.0.9.tgz#de2aeaa3326d5d92263231dd9cfc0d7e817d6d0f"
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/baidu-stt/-/baidu-stt-1.0.10.tgz#ca8ed482bd347b4836a29a123601f070fb06a6ac"
   dependencies:
     little-fetch "^1.0.0"
     mic "^2.1.2"
-    node-record-lpcm16 "^0.3.0"
     snowboy "^1.2.0"
 
 balanced-match@^1.0.0:
@@ -397,10 +396,6 @@ node-pre-gyp@^0.6.30:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
-
-node-record-lpcm16@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/node-record-lpcm16/-/node-record-lpcm16-0.3.0.tgz#797eb70c509db4e982a32162147a7bae34eaacca"
 
 nopt@^4.0.1:
   version "4.0.1"
