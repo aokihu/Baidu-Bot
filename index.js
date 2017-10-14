@@ -28,7 +28,7 @@ class BaiduBot extends EventEmitter {
     super();
 
     this.speech = new BDSpeech(apiKey, secretKey);
-    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual});
+    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual,mdlFile:'./resources/Alexa.pmdl',hotword:'Alexa'});
     this.unit = new BDUNIT({apiKey, secretKey, sceneid});
 
     this.listener.on('ready', () => {this._.readyCount += 1;});
