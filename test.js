@@ -22,7 +22,7 @@ const intents = function({speech}) {
       const pm = now.getHours() > 12 ? true : false;
       const hour = pm ? now.getHours() - 12 : now.getHours();
       let strNow = pm ? "下午" : "";
-      strNow += hour+":"+now.getMinutes();
+      strNow += hour+"点"+now.getMinutes()+"分";
 
       speech.speak("现在时间是"+strNow);
     },
@@ -39,16 +39,20 @@ const opts = {
   secretKey:'kUOllwbrube1Ke1dU0sKliy38h4iGsvB',
   sceneid:3679,
   voiceRate: '16000',
-  continual: false,
+  continual: true,
+  sensitivity: "0.32",
   intents
 }
 
 const bot = new Bot(opts);
-bot.on('ready', () => bot.start())
+bot.on('ready', () => {
+  console.log('Bot准备完毕')
+  bot.start()
+})
 
 bot.on('text', (text)=>console.log(text))
-bot.on('intent', data => console.log(data))
+// bot.on('intent', data => console.log(data))
 bot.on('listen', () => console.log('Listening...'))
 bot.on('upload', () => console.log('Uploading voice data...'))
-bot.on('wake', () => console.log('等待您的命令...'))
+bot.on('wakeup', () => console.log('等待您的命令...'))
 bot.on('error' , console.log)
