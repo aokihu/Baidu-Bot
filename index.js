@@ -5,6 +5,7 @@ const R = require('ramda');
 const BDSpeech = require('baidu_yuyin');
 const BDListener = require('baidu-stt');
 const BDUNIT = require('baidu_unit');
+const player = require('play-sound')(opts = {})
 
 const READY_MAX = 2;
 
@@ -46,12 +47,13 @@ class BaiduBot extends EventEmitter {
 
       this.listener.on('start', () => this.emit('listen'))
       this.listener.on('success', this._query.bind(this))
-      this.listener.on('upload', () => this.emit('upload'))
-      this.listener.on('wakeup', () => this.emit('wakeup'))
+      this.listener.on('wakeup', this._wakeup.bind(this))
+      this.listener.on('upload', this._upload.bind(this))
       this.listener.on('sleep', () => this.emit('sleep'))
       this.listener.on('fail', error => this.emit('error', error))
       this.listener.on('timeout', () => this.emit('timeout'))
       this.unit.on('success', this._response.bind(this))
+      this.unit.on('fail', this._fail.bind(this))
       this.unit.on('debug', (data)=>console.log(data))
 
       this._ = {
@@ -61,6 +63,7 @@ class BaiduBot extends EventEmitter {
         intentsDir
       }
 
+      // TODO Load intents from floder
       this._loadIntents();
 
       setTimeout(() => {
@@ -90,8 +93,7 @@ class BaiduBot extends EventEmitter {
         return func;
       });
 
-      const intentKeys = files.map(file => file.split('.')[0]);
-
+      const intentKeys = files.map(file => file.toUpperCase().split('.')[0]);
       this._.intents = R.zipObj(intentKeys, intents);
     });
   }
@@ -102,25 +104,34 @@ class BaiduBot extends EventEmitter {
   }
 
   _response(intents){
-    console.log(intents);
-    const bestIntent = R.sortBy(R.prop('confidence'))(intents)[0];
+    const {intent, slots, emotion} = intents;
+    const has = R.has(intent, this._.intents);
 
-    if(!bestIntent){
-      this._.intents['FAIL']();
-    }else{
-      const action = this._.intents[bestIntent.intent];
-      const slots = R.reduce((resut, item) => {
-        return Object.assign(resut, {[item.type]:item})
-      }, {}, bestIntent.slots);
-
-      this.emit('intent', { intent:bestIntent['intent'], slots})
-
-      if(action){
-        console.log(action)
-        action(slots);
+    if(has){
+      try{
+        const action = this._.intents[intent];
+        action({speech:this.speech, slots, emotion});
       }
-    }
+      catch(err){
+        this.speech.speak("不好!好像发生了错误");
+        console.log(err);
+      }
 
+    }
+  }
+
+  _fail(){
+    this.speech.speak("很抱歉，我不明白你的意思，请在尝试一次.")
+  }
+
+  _wakeup(){
+    player.play('./resources/ding.wav');
+    this.emit('wakeup');
+  }
+
+  _upload(){
+    player.play('./resources/dong.wav');
+    this.emit('upload');
   }
 
 }

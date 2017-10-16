@@ -12,9 +12,10 @@
   "author": "aokihu <aokihu@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "baidu-stt": "^1.0.1",
-    "baidu_unit": "^1.0.2",
+    "baidu-stt": "^2.0.3",
+    "baidu_unit": "^2.0.0",
     "baidu_yuyin": "^2.3.0",
+    "play-sound": "^1.1.1",
     "ramda": "^0.24.1"
   }
 }
