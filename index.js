@@ -1,4 +1,6 @@
 const EventEmitter = require('events');
+const path = require('path');
+const fs = require('fs');
 const R = require('ramda');
 const BDSpeech = require('baidu_yuyin');
 const BDListener = require('baidu-stt');
@@ -9,13 +11,13 @@ const READY_MAX = 2;
 class BaiduBot extends EventEmitter {
 
   /**
-   *
+   * @constructor
    * @param {stirng} apiKey
    * @param {string} secretKey
    * @param {string} sceneid
    * @param {string} player
    * @param {boolean} continual
-   * @param {Function} intents
+   * @param {Path} intentsDir
    */
   constructor({
     apiKey,
@@ -25,43 +27,50 @@ class BaiduBot extends EventEmitter {
     player,
     hotword,
     modelFile,
+    gain,
     continual,
     sensitivity,
-    intents}){
-    super();
+    intentsDir = './intents'}){
+      // call super()
+      super();
 
-    this.speech = new BDSpeech(apiKey, secretKey);
-    this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual, sensitivity,hotword,modelFile});
-    this.unit = new BDUNIT({apiKey, secretKey, sceneid});
+      this.speech = new BDSpeech(apiKey, secretKey);
+      this.listener = new BDListener({apiKey, secretKey, voiceRate: recordRate, continual, gain,sensitivity,hotword,modelFile});
+      this.unit = new BDUNIT({apiKey, secretKey, sceneid});
 
-    this.listener.on('ready', () => {this._.readyCount += 1;});
-    this.unit.on('ready', () => {this._.readyCount += 1;});
+      this.listener.on('ready', () => {this._.readyCount += 1;});
+      this.unit.on('ready', () => {this._.readyCount += 1;});
 
-    this.listener.init();
-    this.unit.init();
+      this.listener.init();
+      this.unit.init();
 
-    this.listener.on('start', () => this.emit('listen'))
-    this.listener.on('success', this._query.bind(this))
-    this.listener.on('upload', () => this.emit('upload'))
-    this.listener.on('wakeup', () => this.emit('wakeup'))
-    this.listener.on('fail', error => this.emit('error', error))
-    this.unit.on('success', this._response.bind(this))
-    this.unit.on('debug', (data)=>console.log(data))
+      this.listener.on('start', () => this.emit('listen'))
+      this.listener.on('success', this._query.bind(this))
+      this.listener.on('upload', () => this.emit('upload'))
+      this.listener.on('wakeup', () => this.emit('wakeup'))
+      this.listener.on('sleep', () => this.emit('sleep'))
+      this.listener.on('fail', error => this.emit('error', error))
+      this.listener.on('timeout', () => this.emit('timeout'))
+      this.unit.on('success', this._response.bind(this))
+      this.unit.on('debug', (data)=>console.log(data))
 
-    this._ = {
-      readyCount: 0,
-      status: 'none',
-      intents: intents({speech: this.speech})
-    }
-
-    setTimeout(() => {
-      if(this._.readyCount === READY_MAX) {
-        this._.status = 'ready';
-        this.emit('ready');
-      }else{
-        this.emit('error', 'Service is not ready');
+      this._ = {
+        readyCount: 0,
+        status: 'none',
+        intents: {},
+        intentsDir
       }
-    }, 500);
+
+      this._loadIntents();
+
+      setTimeout(() => {
+        if(this._.readyCount === READY_MAX) {
+          this._.status = 'ready';
+          this.emit('ready');
+        }else{
+          this.emit('error', 'Service is not ready');
+        }
+      }, 500);
 
   }
 
@@ -69,6 +78,22 @@ class BaiduBot extends EventEmitter {
     if(this._.status === 'ready'){
       this.listener.listen();
     }
+  }
+
+  _loadIntents(){
+    fs.readdir(this._.intentsDir, (err, files) => {
+      if(err) throw(err);
+
+      const intents = files.map(item => {
+        const intentPath = path.resolve(__dirname, this._.intentsDir, item);
+        const func = require(intentPath);
+        return func;
+      });
+
+      const intentKeys = files.map(file => file.split('.')[0]);
+
+      this._.intents = R.zipObj(intentKeys, intents);
+    });
   }
 
   _query(text){
@@ -91,6 +116,7 @@ class BaiduBot extends EventEmitter {
       this.emit('intent', { intent:bestIntent['intent'], slots})
 
       if(action){
+        console.log(action)
         action(slots);
       }
     }

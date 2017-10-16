@@ -18,13 +18,7 @@ const intents = function({speech}) {
       speech.speak("让我来问问气象局")
     },
     'ASK_TIME'(slots){
-      const now = new Date();
-      const pm = now.getHours() > 12 ? true : false;
-      const hour = pm ? now.getHours() - 12 : now.getHours();
-      let strNow = pm ? "下午" : "";
-      strNow += hour+"点"+now.getMinutes()+"分";
-
-      speech.speak("现在时间是"+strNow);
+      
     },
     'ASK_DATE'(slots){
       const now = new Date();
@@ -38,9 +32,10 @@ const opts = {
   apiKey:'1VkerpAf4y8Ipdxc5R1xPsx1',
   secretKey:'kUOllwbrube1Ke1dU0sKliy38h4iGsvB',
   sceneid:3679,
-  voiceRate: '16000',
+  voiceRate: '8000',
   continual: true,
-  sensitivity: "0.32",
+  sensitivity: "0.4",
+  gain: 1.0,
   intents
 }
 
@@ -55,4 +50,6 @@ bot.on('text', (text)=>console.log(text))
 bot.on('listen', () => console.log('Listening...'))
 bot.on('upload', () => console.log('Uploading voice data...'))
 bot.on('wakeup', () => console.log('等待您的命令...'))
+bot.on('sleep', () => console.log('Sleep'))
+bot.on('timeout', () => console.log('TIME OUT'))
 bot.on('error' , console.log)
