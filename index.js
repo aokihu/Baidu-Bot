@@ -99,8 +99,10 @@ class BaiduBot extends EventEmitter {
   }
 
   _query(text){
-    this.emit('text', text);
-    this.unit.query(text[0]);
+    
+    const requestText = text[0].replace(/，/g,'');
+    this.emit('text', requestText);
+    this.unit.query(requestText);
   }
 
   _response(intents){
